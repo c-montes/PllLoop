@@ -44,22 +44,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="complex_scriptlist.csv">
+    <None Update="SampleFiles\complex_scriptlist.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="MapFileSample.csv">
+    <None Update="SampleFiles\MapFileSample.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="mapfile_CA.csv">
+    <None Update="SampleFiles\mapfile_CA.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="ScriptListSample.csv">
+    <None Update="SampleFiles\ScriptListSample.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="SDR875_PLLCalScriptList_F18904-F18904_RX.csv">
+    <None Update="SampleFiles\SDR875_PLLCalScriptList_F18904-F18904_RX.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="SDR875_spurtestcases_F18904_RX_short.csv">
+    <None Update="SampleFiles\SDR875_spurtestcases_F18904_RX_short.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>

@@ -79,7 +79,7 @@ namespace OpenTap.Qualcomm.PllLoop
 
         public PllCalcCATestStep()
         {
-            ScriptList = "SDR875_PLLCalScriptList_F18904-F18904_RX.csv";
+            ScriptList = "SampleFiles\\SDR875_PLLCalScriptList_F18904-F18904_RX.csv";
         }
 
         public override void Run()

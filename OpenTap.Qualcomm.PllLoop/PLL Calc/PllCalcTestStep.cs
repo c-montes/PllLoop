@@ -62,7 +62,7 @@ namespace OpenTap.Qualcomm.PllLoop
 
         public PllCalcTestStep()
         {
-            ScriptList = "ScriptListSample.csv";
+            ScriptList = "SampleFiles\\ScriptListSample.csv";
         }
 
         public override void Run()

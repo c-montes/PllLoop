@@ -1,5 +1,5 @@
 ScriptFolder=X:\register_settings\SDR875_SoC\V210.200.000_CA.034_RFFE,,,,,,,,,,,,,,,,,,,,,,,,,,,
-MapFile=SDR875_SoC_PTE_Script_Map_CA_RF_WMSS-STGDC.csv
+MapFile=SampleFiles\SDR875_SoC_PTE_Script_Map_CA_RF_WMSS-STGDC.csv
 "Note:,Freq Override(MHz);Freq Mode(A=Absolute B=Bypass R=Relative to Main);Block Name(Auto RX# TX# FBRX# GPS);Item(Freq Override etc.)",,,,,,,,,,,,,,,,,,,,,,,,,,,
 Main_Script,Delta_Script (+),PLL to Meas,RX0_Freq_Override,RX0_Freq_Mode,RX1_Freq_Override,RX1_Freq_Mode,RX2_Freq_Override,RX2_Freq_Mode,RX3_Freq_Override,RX3_Freq_Mode,RX4_Freq_Override,RX4_Freq_Mode,RX5_Freq_Override,RX5_Freq_Mode,RX6_Freq_Override,RX6_Freq_Mode,TX0_Freq_Override,TX0_Freq_Mode,TX1_Freq_Override,TX1_Freq_Mode,TX2_Freq_Override,TX2_Freq_Mode,GPS0_Freq_Override,GPS0_Freq_Mode,GPS1_Freq_Override,GPS1_Freq_Mode,ExportedScriptName
 spur_idx_00651_n1A-n5A-n7A_02-01-00_1-1-1_2-0-0_ps1_opt001,,,,B,,B,,B,871.5,A,2156.92,A,,B,2622.54,A,826.5,A,1966.92,A,,B,,B,,B,SP_6DL2UL_T4115_F18904_V110.csv
