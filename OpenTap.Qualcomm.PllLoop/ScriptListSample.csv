@@ -1,0 +1,9 @@
+ScriptFolder=F:,,,,,,
+MapFile=MapFileSample.csv,,,,,,
+Note: 'Freq Override' (MHz); 'Freq Mode' (A=Absolute B=Bypass R=Relative to Main); 'Block Name' (Auto RX# TX# FBRX# GPS); 'Item' (Freq Override etc.) ,,,,,,
+Main_Script,Delta_Script (+),Delta Script After (+),PLL_to_Meas,AUTO_Freq_Override,AUTO_Freq_Mode,in_step_channel_sweep
+RF_WMSS_MMWIF8P3_RP0-R0_HOME_100_8300P0_1_1212_BF1_0X01_CL7_N,,,AUTO,8300,A,no
+RF_WMSS_MMWIF8P4_RP1-R1_HOME_100_8400P0_1_1212_BF1_0X01_CL7_N,,,AUTO,8400,A,no
+RF_WMSS_MMWIF8P6_RP2-R2_HOME_100_8600P0_1_1212_BF1_0X01_CL7_N,,,AUTO,8650,A,no
+RF_WMSS_MMWIF8P8_RP2-R2_HOME_100_8800P0_1_1212_BF1_0X01_CL7_N,,,AUTO,8800,A,no
+RF_WMSS_MMWIF14P2_RP2-R2_HOME_100_14200P0_1_2212_BF1_0X01_CL7_N,,,AUTO,14200,A,no

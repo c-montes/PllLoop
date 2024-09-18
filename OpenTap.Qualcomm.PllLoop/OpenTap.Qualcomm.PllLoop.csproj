@@ -32,15 +32,24 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="OpenTAP" Version="9.24.2" />
+    <PackageReference Include="OpenTAP" Version="9.26.0-beta.17" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DebugWith)' == 'TUI' AND '$(Configuration)' == 'Debug'">
-    <OpenTapPackageReference Include="TUI" version="1"/>
+    <OpenTapPackageReference Include="TUI" version="1" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(DebugWith)' == 'Editor' AND '$(Configuration)' == 'Debug'">
-    <OpenTapPackageReference Include="Editor" version="9"/>
+    <OpenTapPackageReference Include="Editor" version="9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="MapFileSample.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="ScriptListSample.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
