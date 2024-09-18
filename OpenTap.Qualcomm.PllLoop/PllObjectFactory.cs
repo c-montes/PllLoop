@@ -6,25 +6,24 @@ namespace OpenTap.Qualcomm.PllLoop
     public static class PllObjectFactory
     {
         static readonly TraceSource PllObjectFactoryLog = OpenTap.Log.CreateSource("PllObjectFactory");
-        public static IPllObject Create(OptionType option)
+        public static IPllObject Create(string pllType)
         {
-            //return option switch
-            //{
-            //    OptionType.TX_PLL => new TxPllObject(),
-            //    OptionType.RX_PLL => new RxPllObject(),
-            //    OptionType.XO_PLL => new XoPllObject(),
-            //    _ => throw new ArgumentException("Invalid option type", nameof(option)),
-            //};
-            switch (option)
+            if (pllType.Contains("RP0"))
             {
-                case OptionType.TX_PLL:
-                    return new TxPllObject();
-                case OptionType.RX_PLL:
-                    return new RxPllObject();
-                case OptionType.XO_PLL:
-                    return new XoPllObject();
-                default:
-                    throw new ArgumentException("Invalid option type", nameof(option));
+                return new RxPll0Object();
+            }
+            else if (pllType.Contains("RP1"))
+            {
+                return new RxPll1Object();
+            }
+            else if (pllType.Contains("RP2"))
+            {
+                return new RxPll2Object();
+            }
+            else
+            {
+                PllObjectFactoryLog.Error("Invalid option type");
+                throw new ArgumentException("Invalid option type", nameof(pllType));
             }
         }
     }

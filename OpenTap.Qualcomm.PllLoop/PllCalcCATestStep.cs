@@ -6,15 +6,17 @@ using System.Linq;
 
 namespace OpenTap.Qualcomm.PllLoop
 {
-    // Define an enum with three options
-    public enum OptionType
+    public class Pll 
     {
-        TX_PLL,
-        RX_PLL,
-        XO_PLL
+        [Display("Name", Order: 1)]
+        public string Name { get; set; }
+        [Display("Freq Override", Order: 2)]
+        public string Freq_Override { get; set; }
+        [Display("Freq Mode", Order: 3)]
+        public string Freq_Mode { get; set; }
     }
 
-    public class PLLScriptList
+    public class PLLScriptListCA
     {
         [Display("Enabled", Order: 0.1)]
         public bool Enabled { get; set; }
@@ -22,26 +24,31 @@ namespace OpenTap.Qualcomm.PllLoop
         public string MainScript { get; set; }
         [Display("Delta Script", Order: 2)]
         public string DeltaScript { get; set; }
-        [Display("Delta Script After", Order: 3)]
-        public string DeltaScriptAfter { get; set; } 
+        //[Display("Delta Script After", Order: 3)]
+        //public string DeltaScriptAfter { get; set; } 
         [Display("PLL to Meas", Order: 4)]
-        public string PLL_to_Meas { get; set; }	
-        [Display("AUTO Freq Override", Order: 5)]
-        public string AUTO_Freq_Override { get; set; } 
-        [Display("AUTO Freq Mode", Order: 6)]
-        public string AUTO_Freq_Mode { get; set; } 
-        [Display("in step channel sweep", Order: 7)]
-        public string in_step_channel_sweep { get; set; }
+        public string PLL_to_Meas { get; set; }
+
+        [Display("PLLs", Order: 5)]
+        public List<Pll> Plls { get; set; }
+
+        [Display("ExportedScriptName", Order: 7)]
+        public string ExportedScriptName { get; set; }
+
+        public PLLScriptListCA()
+        {
+            Plls = new List<Pll>();
+            Plls.Add(new Pll { Name = "RX0", Freq_Override = "", Freq_Mode = "B" });
+            Plls.Add(new Pll { Name = "RX1", Freq_Override = "", Freq_Mode = "B" });
+        }
     }
 
     [AllowAnyChild]
-    [Display("MyTestStep", Description: "Insert a description here", Group: "OpenTap.Qualcomm.PllLoop")]
+    [Display("PLL Calculator CA", Description: "Insert a description here", Group: "OpenTap.Qualcomm.PllLoop")]
 
-    public class MyTestStep : TestStep
+    public class PllCalcCATestStep : TestStep
     {
         #region Settings
-        public OptionType SelectedOption { get; set; }
-
         private string _ScriptList;
         [Display("Script List", Group: "Script List", Order: 10)]
         [FilePath]
@@ -64,24 +71,24 @@ namespace OpenTap.Qualcomm.PllLoop
         [Display("Map File", Group: "Script List", Order: 12)]
         public string MapFile { get; set; }
         [Display("Script List", Group: "Script List", Order: 13)]
-        public List<PLLScriptList> PllScriptList { get; set; }
+        public List<PLLScriptListCA> PllScriptList { get; set; }
         #endregion
 
         private List<string> MapFileList = new List<string>();
 
 
-        public MyTestStep()
+        public PllCalcCATestStep()
         {
-            ScriptList = "ScriptListSample.csv";
-            SelectedOption = OptionType.TX_PLL;
+            ScriptList = "SDR875_PLLCalScriptList_F18904-F18904_RX.csv";
         }
 
         public override void Run()
         {
+            // Only reading the map file once at the beginning of the test
             ParseMapFile();
 
 
-            foreach(PLLScriptList script in PllScriptList)
+            foreach(PLLScriptListCA script in PllScriptList)
             {
 
                 if (!script.Enabled)
@@ -91,11 +98,15 @@ namespace OpenTap.Qualcomm.PllLoop
                 List<string> MapFileValues = SearchMapFile(script.MainScript);
 
                 // Find what type of PLL is from script headers: i.e. RP0 -> RX_PLL0
+                // in the following example: RF_WMSS_MMWIF8P3_RP0-R0_HOME_100_8300P0_1_1212_BF1_0X01_CL7_N
+                // the PLL type is RP0 on the 4th position
+                String pllType = script.MainScript.Split('_')[3];
+
                 // Use the factory to create the appropriate object
-                IPllObject pllObject = PllObjectFactory.Create(SelectedOption);
+                IPllObject pllObject = PllObjectFactory.Create(pllType);
 
 
-
+                /*
                 if (script.AUTO_Freq_Override.Contains(":"))
                 {
                     // Unroll Frequency
@@ -110,17 +121,7 @@ namespace OpenTap.Qualcomm.PllLoop
                         //Log.Info("AUTO_Freq_Mode: " + script.AUTO_Freq_Mode);
                         //Log.Info("in_step_channel_sweep: " + script.in_step_channel_sweep);
 
-                        Log.Info("Map File Values");
-                        int i = 0;
-                        foreach (string value in MapFileValues)
-                        {
-                            i++;
-                            if (i == 1) continue;
-                            Log.Info(value);
-                        }
-
-
-                        pllObject.Execute();
+                        pllObject.Execute(MapFileValues);
 
                         RunChildSteps(); //If step has child steps.
 
@@ -137,52 +138,55 @@ namespace OpenTap.Qualcomm.PllLoop
                     //Log.Info("AUTO_Freq_Mode: " + script.AUTO_Freq_Mode);
                     //Log.Info("in_step_channel_sweep: " + script.in_step_channel_sweep);
 
-                    Log.Info("Map File Values");
-                    int i = 0;
-                    foreach (string value in MapFileValues)
-                    {
-                        i++;
-                        if (i == 1) continue;
-                        Log.Info(value);
-                    }
-
-                    pllObject.Execute();
+                    pllObject.Execute(MapFileValues);
 
                     RunChildSteps(); //If step has child steps.
 
                 }
+                */
             }
 
             UpgradeVerdict(Verdict.Pass);
         }
 
         /// <summary>
-        /// 
+        /// Parse the ScriptList file and populate the PllScriptList
+        /// It also takes the row where the ScriptFolder is located and stores it in ScriptFolder
+        /// Additionally, it takes the row where the MapFile is located and stores it in MapFile
         /// </summary>
         /// <exception cref="Exception"></exception>
         public void ParseScriptList()
         {
-            PllScriptList = new List<PLLScriptList>();
+            PllScriptList = new List<PLLScriptListCA>();
+            List<string> PllNames = new List<string>();
+
             using (StreamReader sr = new StreamReader(ScriptList))
             {
                 string line;
                 bool processingList = false;
+                int totalColumns = 0;
+                int NumberOfPlls = 0;
+
                 while ((line = sr.ReadLine()) != null)
                 {
                     string[] script = line.Split(',');
                     if (processingList)
                     {
-                        PllScriptList.Add(new PLLScriptList
+                        PLLScriptListCA newPllScriptListCA = new PLLScriptListCA
                         {
                             Enabled = true,
                             MainScript = script[0],
                             DeltaScript = script[1],
-                            DeltaScriptAfter = script[2],
-                            PLL_to_Meas = script[3],
-                            AUTO_Freq_Override = script[4],
-                            AUTO_Freq_Mode = script[5],
-                            in_step_channel_sweep = script[6]
-                        });
+                            PLL_to_Meas = script[2],
+                            ExportedScriptName = script[totalColumns-1]
+                        };
+
+                        for (int i = 0; i < NumberOfPlls; i++)
+                        {
+                            newPllScriptListCA.Plls.Add(new Pll { Name = PllNames[i], Freq_Override = script[3 + (i * 2)], Freq_Mode = script[4 + (i * 2)] });
+                        }
+
+                        PllScriptList.Add(newPllScriptListCA);
                     }
                     else if (script[0].Contains("ScriptFolder"))
                     {
@@ -194,12 +198,22 @@ namespace OpenTap.Qualcomm.PllLoop
                         string[] scriptLine = script[0].Split('=');
                         MapFile = scriptLine[1];
                     }
-                    else if (script[0].StartsWith("Note"))
+                    else if (script[0].StartsWith("\"Note:"))
                     {
                         continue;
                     }
                     else if (script[0].Contains("Main_Script"))
                     {
+                        // Get the headers and PLL types, also create the list of PLLs
+                        totalColumns = script.Length;
+                        NumberOfPlls = (totalColumns - 4) / 2;
+
+                        for (int i = 0; i < NumberOfPlls; i++)
+                        {
+                            PllNames.Add(script[3 + (i * 2)].Split('_')[0]);
+                        }
+
+
                         processingList = true;
                         continue;
                     }
@@ -211,6 +225,9 @@ namespace OpenTap.Qualcomm.PllLoop
             }
         }
 
+        /// <summary>
+        /// Opens the MapFile and stores each line in a list MapFileList
+        /// </summary>
         public void ParseMapFile()
         {
             MapFileList = new List<string>();
@@ -224,6 +241,12 @@ namespace OpenTap.Qualcomm.PllLoop
             }
         }
 
+        /// <summary>
+        /// Searches the MapFileList for a key and returns the values in a list
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        /// <exception cref="Exception"></exception>
         public List<string> SearchMapFile(string key)
         {
            List<string> result = new List<string>();
@@ -238,6 +261,15 @@ namespace OpenTap.Qualcomm.PllLoop
             throw new Exception("Key not found in MapFile");
         }
 
+        /// <summary>
+        /// If the Frequency is in the format 8000:1:8040 this function will unroll it to a list of frequencies
+        /// where the first item is the start frequency
+        /// the second items is the step size
+        /// and the third item is the stop frequency
+        /// the list will contain all the frequencies between the start and stop frequency with the step size
+        /// </summary>
+        /// <param name="freq"></param>
+        /// <returns></returns>
         public List<double> UnrollFrequency(string freq)
         {
             List<double> freqList = new List<double>();
@@ -252,6 +284,12 @@ namespace OpenTap.Qualcomm.PllLoop
             return freqList;
         }
 
+        /// <summary>
+        /// Updates the given key by replacing the frequency value in the 7th position with the new frequency
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="freq"></param>
+        /// <returns></returns>
         public string UpdateKey(string key, double freq)
         {
             //RF_WMSS_MMWIF8P3_RP0-R0_HOME_100_8300P0_1_1212_BF1_0X01_CL7_N
