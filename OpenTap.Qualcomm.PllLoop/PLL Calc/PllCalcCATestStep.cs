@@ -76,10 +76,12 @@ namespace OpenTap.Qualcomm.PllLoop
 
         private List<string> MapFileList = new List<string>();
 
+        public string ExportedScriptName { get; set; }
 
         public PllCalcCATestStep()
         {
             ScriptList = "SampleFiles\\SDR875_PLLCalScriptList_F18904-F18904_RX.csv";
+            ExportedScriptName = "";
         }
 
         public override void Run()
@@ -87,8 +89,7 @@ namespace OpenTap.Qualcomm.PllLoop
             // Only reading the map file once at the beginning of the test
             ParseMapFile();
 
-
-            foreach(PLLScriptListCA script in PllScriptList)
+            foreach (PLLScriptListCA script in PllScriptList)
             {
 
                 if (!script.Enabled)
@@ -97,13 +98,14 @@ namespace OpenTap.Qualcomm.PllLoop
                 }
                 List<string> MapFileValues = SearchMapFile(script.MainScript);
 
-                // Find what type of PLL is from script headers: i.e. RP0 -> RX_PLL0
-                // in the following example: RF_WMSS_MMWIF8P3_RP0-R0_HOME_100_8300P0_1_1212_BF1_0X01_CL7_N
-                // the PLL type is RP0 on the 4th position
-                String pllType = script.MainScript.Split('_')[3];
+                // For each PLL in the script, create the appropriate object and execute it
+                foreach (Pll pll in script.Plls) 
+                {
+                    Log.Info(pll.Name);
+                    // Use the factory to create the appropriate object
+                    IPllObject pllObject = PllObjectFactory.Create(pll.Name);
+                }
 
-                // Use the factory to create the appropriate object
-                IPllObject pllObject = PllObjectFactory.Create(pllType);
 
 
                 /*
@@ -144,6 +146,13 @@ namespace OpenTap.Qualcomm.PllLoop
 
                 }
                 */
+
+                // TODO
+                // Push this to script headers
+                // TODO
+                ExportedScriptName = script.ExportedScriptName;
+
+                RunChildSteps(); //If step has child steps.
             }
 
             UpgradeVerdict(Verdict.Pass);

@@ -50,11 +50,17 @@
     <None Update="SampleFiles\MapFileSample.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="SampleFiles\MapFileSampleLarge.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Update="SampleFiles\mapfile_CA.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="SampleFiles\ScriptListSample.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="SampleFiles\ScriptListSampleLarge.csv">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Update="SampleFiles\SDR875_PLLCalScriptList_F18904-F18904_RX.csv">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
